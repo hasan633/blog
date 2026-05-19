@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content to Blog HTML Converter</title>
+<title>Content to Blog HTML Converter HB</title>
 <style>
 *{
   margin:0;
@@ -58,6 +58,24 @@ body{
 }
 .card-head h2{
   font-size:18px;
+}
+.img_box{
+  width:100%;
+  min-height:140px;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  overflow:hidden;
+  background:#f9fafb;
+  margin:18px 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.img_box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 .actions{
   display:flex;
@@ -267,6 +285,11 @@ textarea.output{
         <label class="option">
           <input id="h3ShopButton" type="checkbox" checked>
           Add Shop Now button after H3 blocks
+        </label>
+
+        <label class="option">
+          <input id="h3ImageBlock" type="checkbox" checked>
+          Add image wrapper to H3 blocks
         </label>
 
         <label class="option">
@@ -496,6 +519,7 @@ function formatLines(lines){
 function makeHTML(data){
   const skipEmpty = document.getElementById('skipEmpty').checked;
   const addButton = document.getElementById('h3ShopButton').checked;
+  const addH3Image = document.getElementById('h3ImageBlock').checked;
   let lines = [];
 
   lines.push('<div class="main_post_content">');
@@ -548,6 +572,7 @@ function makeHTML(data){
     }
 
     const headingTag = block.type === 'h3' ? 'h3' : 'h2';
+    const shouldRenderImage = block.type === 'h2' || (block.type === 'h3' && addH3Image);
 
     lines.push('<div class="inner_post_content_block">');
 
@@ -555,7 +580,9 @@ function makeHTML(data){
     lines.push('<' + headingTag + '>' + escapeHTML(block.heading) + '</' + headingTag + '>');
     lines.push('</div>');
 
-    lines.push('<div class="img_box"><img src=""></div>');
+    if(shouldRenderImage){
+      lines.push('<div class="img_box"><img src=""></div>');
+    }
 
     lines.push('<div class="text_box">');
 
