@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content to Blog HTML Converter</title>
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+body{
+  background:#f4f6f8;
+  color:#111827;
+  padding:28px;
+}
+.app{
+  max-width:1280px;
+  margin:0 auto;
+}
+.header{
+  background:#111827;
+  color:#fff;
+  padding:24px;
+  border-radius:18px;
+  margin-bottom:20px;
+}
+.header h1{
+  font-size:26px;
+  margin-bottom:8px;
+}
+.header p{
+  color:#d1d5db;
+  line-height:1.5;
+  font-size:14px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,.05);
+  overflow:hidden;
+}
+.card-head{
+  padding:16px 18px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.card-head h2{
+  font-size:18px;
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+button,
+.file-label{
+  border:none;
+  background:#111827;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
+button.secondary{
+  background:#374151;
+}
+button.green{
+  background:#15803d;
+}
+button.blue{
+  background:#1d4ed8;
+}
+button.red{
+  background:#dc2626;
+}
+button.light{
+  background:#e5e7eb;
+  color:#111827;
+}
+input[type=file]{
+  display:none;
+}
+.editor{
+  min-height:560px;
+  max-height:650px;
+  overflow:auto;
+  padding:20px;
+  outline:none;
+  line-height:1.65;
+}
+.editor:empty:before{
+  content:"Paste your Google Docs or Word content here...";
+  color:#9ca3af;
+}
+.editor h1,
+.editor h2,
+.editor h3{
+  margin:16px 0 8px;
+}
+.editor p{
+  margin:10px 0;
+}
+.editor ul{
+  margin:10px 0 10px 24px;
+}
+.editor table{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+}
+.editor th,
+.editor td{
+  border:1px solid #d1d5db;
+  padding:8px;
+}
+textarea.output{
+  width:100%;
+  min-height:560px;
+  max-height:650px;
+  resize:vertical;
+  border:0;
+  outline:none;
+  padding:20px;
+  font-size:13px;
+  line-height:1.55;
+  font-family:Consolas, Monaco, monospace;
+  color:#00e676;
+  background:#0b0f14;
+}
+.options{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:12px;
+  padding:16px 18px;
+  border-bottom:1px solid #e5e7eb;
+}
+.option{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:13px;
+  color:#374151;
+}
+.option input{
+  width:16px;
+  height:16px;
+}
+.small-note{
+  padding:12px 18px;
+  font-size:12px;
+  color:#6b7280;
+  border-bottom:1px solid #e5e7eb;
+  background:#f9fafb;
+  line-height:1.5;
+}
+.toast{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  background:#111827;
+  color:#fff;
+  padding:12px 16px;
+  border-radius:12px;
+  display:none;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  font-size:13px;
+}
+.preview{
+  margin-top:20px;
+}
+.preview-content{
+  padding:20px;
+  background:#fff;
+  line-height:1.65;
+  max-height:420px;
+  overflow:auto;
+}
+.preview-content .main_banner_content,
+.preview-content .inner_post_content_block{
+  border:1px solid #e5e7eb;
+  padding:14px;
+  margin-bottom:14px;
+  border-radius:12px;
+}
+.preview-content table{
+  width:100%;
+  border-collapse:collapse;
+}
+.preview-content th,
+.preview-content td{
+  border:1px solid #d1d5db;
+  padding:8px;
+}
+@media(max-width:900px){
+  body{
+    padding:14px;
+  }
+  .grid{
+    grid-template-columns:1fr;
+  }
+  .options{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <h1>Content to Blog by HB</h1>
+    <p>Paste content from Google Docs or Word. This tool converts headings, paragraphs, unordered lists, and tables into your fixed blog HTML wrapper. Images are skipped.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Input Content</h2>
+        <div class="actions">
+          <label class="file-label" for="fileInput">Upload .txt / .html</label>
+          <input id="fileInput" type="file" accept=".txt,.html,.htm">
+          <button class="light" onclick="clearInput()">Clear</button>
+        </div>
+      </div>
+
+      <div class="small-note">
+        Best method: copy content from Google Docs or Word and paste it directly below. Keep headings as real headings where possible.
+      </div>
+
+      <div id="inputEditor" class="editor" contenteditable="true"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Converted HTML</h2>
+        <div class="actions">
+          <button class="green" onclick="convertContent()">Convert</button>
+          <button class="blue" onclick="copyOutput()">Copy</button>
+          <button class="secondary" onclick="downloadOutput()">Download</button>
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="option">
+          <input id="firstParasBanner" type="checkbox" checked>
+          Use first paragraphs before first heading as banner
+        </label>
+
+        <label class="option">
+          <input id="h3ShopButton" type="checkbox" checked>
+          Add Shop Now button after H3 blocks
+        </label>
+
+        <label class="option">
+          <input id="skipEmpty" type="checkbox" checked>
+          Skip empty tags
+        </label>
+
+        <label class="option">
+          <input id="prettyFormat" type="checkbox" checked>
+          Pretty formatted output
+        </label>
+      </div>
+
+      <textarea id="output" class="output" placeholder="Converted HTML will appear here..."></textarea>
+    </div>
+
+  </div>
+
+  <div class="card preview">
+    <div class="card-head">
+      <h2>Quick Preview</h2>
+      <div class="actions">
+        <button class="light" onclick="refreshPreview()">Refresh Preview</button>
+      </div>
+    </div>
+    <div id="preview" class="preview-content"></div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const inputEditor = document.getElementById('inputEditor');
+const output = document.getElementById('output');
+const preview = document.getElementById('preview');
+
+function showToast(message){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 1800);
+}
+
+function escapeHTML(value){
+  return String(value || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+function cleanText(value){
+  return String(value || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getDirectText(node){
+  let text = '';
+  node.childNodes.forEach(child => {
+    if(child.nodeType === Node.TEXT_NODE){
+      text += child.textContent;
+    }
+  });
+  return cleanText(text || node.textContent);
+}
+
+function createBlock(type, heading){
+  return {
+    type:type,
+    heading:heading || '',
+    paragraphs:[],
+    ul:[],
+    table:null
+  };
+}
+
+function pushParagraphToBlock(blocks, bannerParas, text, hasHeadingStarted){
+  if(!text) return;
+
+  if(!hasHeadingStarted && document.getElementById('firstParasBanner').checked){
+    bannerParas.push(text);
+    return;
+  }
+
+  if(!blocks.length){
+    blocks.push(createBlock('h2',''));
+  }
+
+  blocks[blocks.length - 1].paragraphs.push(text);
+}
+
+function parseTable(table){
+  const rows = Array.from(table.querySelectorAll('tr'));
+  if(!rows.length) return null;
+
+  let header = [];
+  let body = [];
+
+  rows.forEach((row, rowIndex) => {
+    const cells = Array.from(row.children).filter(cell => {
+      const tag = cell.tagName ? cell.tagName.toLowerCase() : '';
+      return tag === 'th' || tag === 'td';
+    });
+
+    const values = cells.map(cell => cleanText(cell.textContent));
+
+    if(!values.length) return;
+
+    const hasTh = cells.some(cell => cell.tagName && cell.tagName.toLowerCase() === 'th');
+
+    if(rowIndex === 0 && (hasTh || values.length)){
+      header = values;
+    }else{
+      body.push(values);
+    }
+  });
+
+  if(!header.length && body.length){
+    header = body.shift();
+  }
+
+  return {header, body};
+}
+
+function readNodes(){
+  const blocks = [];
+  const bannerParas = [];
+  let hasHeadingStarted = false;
+
+  function walk(nodes){
+    Array.from(nodes).forEach(node => {
+      if(node.nodeType === Node.TEXT_NODE){
+        const text = cleanText(node.textContent);
+        if(text){
+          pushParagraphToBlock(blocks, bannerParas, text, hasHeadingStarted);
+        }
+        return;
+      }
+
+      if(node.nodeType !== Node.ELEMENT_NODE) return;
+
+      const tag = node.tagName.toLowerCase();
+
+      if(tag === 'img' || tag === 'figure' || tag === 'picture' || tag === 'svg'){
+        return;
+      }
+
+      if(tag === 'h1' || tag === 'h2'){
+        const text = cleanText(node.textContent);
+        if(text || !document.getElementById('skipEmpty').checked){
+          blocks.push(createBlock('h2', text));
+          hasHeadingStarted = true;
+        }
+        return;
+      }
+
+      if(tag === 'h3' || tag === 'h4'){
+        const text = cleanText(node.textContent);
+        if(text || !document.getElementById('skipEmpty').checked){
+          blocks.push(createBlock('h3', text));
+          hasHeadingStarted = true;
+        }
+        return;
+      }
+
+      if(tag === 'p' || tag === 'div'){
+        const containsBlock = node.querySelector('h1,h2,h3,h4,ul,ol,table');
+        const text = cleanText(node.textContent);
+
+        if(tag === 'div' && containsBlock){
+          walk(node.childNodes);
+          return;
+        }
+
+        if(text || !document.getElementById('skipEmpty').checked){
+          pushParagraphToBlock(blocks, bannerParas, text, hasHeadingStarted);
+        }
+        return;
+      }
+
+      if(tag === 'ul' || tag === 'ol'){
+        if(!blocks.length){
+          blocks.push(createBlock('h2',''));
+        }
+
+        const items = Array.from(node.children)
+          .filter(li => li.tagName && li.tagName.toLowerCase() === 'li')
+          .map(li => cleanText(li.textContent))
+          .filter(Boolean);
+
+        blocks[blocks.length - 1].ul.push(...items);
+        return;
+      }
+
+      if(tag === 'table'){
+        const tableData = parseTable(node);
+        if(tableData){
+          blocks.push({
+            type:'table',
+            heading:'',
+            paragraphs:[],
+            ul:[],
+            table:tableData
+          });
+          hasHeadingStarted = true;
+        }
+        return;
+      }
+
+      walk(node.childNodes);
+    });
+  }
+
+  walk(inputEditor.childNodes);
+
+  return {bannerParas, blocks};
+}
+
+function formatLines(lines){
+  return document.getElementById('prettyFormat').checked ? lines.join('\n') : lines.join('');
+}
+
+function makeHTML(data){
+  const skipEmpty = document.getElementById('skipEmpty').checked;
+  const addButton = document.getElementById('h3ShopButton').checked;
+  let lines = [];
+
+  lines.push('<div class="main_post_content">');
+  lines.push('<div class="inner_wrap_post_content">');
+  lines.push('');
+
+  lines.push('<div class="main_banner_content">');
+  data.bannerParas.forEach(p => {
+    if(!skipEmpty || cleanText(p)){
+      lines.push('<p>' + escapeHTML(p) + '</p>');
+    }
+  });
+  lines.push('</div>');
+  lines.push('');
+
+  data.blocks.forEach(block => {
+    if(block.type === 'table'){
+      lines.push('<div class="inner_post_content_block">');
+      lines.push('<div class="table_box">');
+      lines.push('<table>');
+      lines.push('<thead>');
+      lines.push('<tr>');
+
+      block.table.header.forEach(th => {
+        if(!skipEmpty || cleanText(th)){
+          lines.push('<th>' + escapeHTML(th) + '</th>');
+        }
+      });
+
+      lines.push('</tr>');
+      lines.push('</thead>');
+      lines.push('<tbody>');
+
+      block.table.body.forEach(row => {
+        lines.push('<tr>');
+        row.forEach(td => {
+          if(!skipEmpty || cleanText(td)){
+            lines.push('<td>' + escapeHTML(td) + '</td>');
+          }
+        });
+        lines.push('</tr>');
+      });
+
+      lines.push('</tbody>');
+      lines.push('</table>');
+      lines.push('</div>');
+      lines.push('</div>');
+      lines.push('');
+      return;
+    }
+
+    const headingTag = block.type === 'h3' ? 'h3' : 'h2';
+
+    lines.push('<div class="inner_post_content_block">');
+
+    lines.push('<div class="headeing_box">');
+    lines.push('<' + headingTag + '>' + escapeHTML(block.heading) + '</' + headingTag + '>');
+    lines.push('</div>');
+
+    lines.push('<div class="img_box"><img src=""></div>');
+
+    lines.push('<div class="text_box">');
+
+    block.paragraphs.forEach(p => {
+      if(!skipEmpty || cleanText(p)){
+        lines.push('<p>' + escapeHTML(p) + '</p>');
+      }
+    });
+
+    if(block.ul.length){
+      lines.push('<ul>');
+      block.ul.forEach(li => {
+        if(!skipEmpty || cleanText(li)){
+          lines.push('<li>' + escapeHTML(li) + '</li>');
+        }
+      });
+      lines.push('</ul>');
+    }
+
+    lines.push('</div>');
+
+    if(block.type === 'h3' && addButton){
+      lines.push('<div class="button_box"><a href="">Shop Now</a></div>');
+    }
+
+    lines.push('</div>');
+    lines.push('');
+  });
+
+  lines.push('</div>');
+  lines.push('</div>');
+
+  return formatLines(lines);
+}
+
+function convertContent(){
+  const data = readNodes();
+  output.value = makeHTML(data);
+  refreshPreview();
+  showToast('Converted');
+}
+
+function refreshPreview(){
+  preview.innerHTML = output.value || '';
+}
+
+function copyOutput(){
+  if(!output.value.trim()){
+    convertContent();
+  }
+
+  navigator.clipboard.writeText(output.value).then(() => {
+    showToast('Copied');
+  }).catch(() => {
+    output.select();
+    document.execCommand('copy');
+    showToast('Copied');
+  });
+}
+
+function downloadOutput(){
+  if(!output.value.trim()){
+    convertContent();
+  }
+
+  const blob = new Blob([output.value], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'converted-blog-html.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded');
+}
+
+function clearInput(){
+  inputEditor.innerHTML = '';
+  output.value = '';
+  preview.innerHTML = '';
+  showToast('Cleared');
+}
+
+document.getElementById('fileInput').addEventListener('change', function(){
+  const file = this.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e){
+    const content = e.target.result || '';
+
+    if(file.name.toLowerCase().endsWith('.txt')){
+      inputEditor.innerHTML = content
+        .split(/\n{2,}/)
+        .map(p => '<p>' + escapeHTML(p.trim()) + '</p>')
+        .join('');
+    }else{
+      inputEditor.innerHTML = content;
+    }
+
+    showToast('File loaded');
+  };
+
+  reader.readAsText(file);
+});
+
+inputEditor.addEventListener('paste', function(e){
+  e.preventDefault();
+
+  const html = e.clipboardData.getData('text/html');
+  const text = e.clipboardData.getData('text/plain');
+
+  if(html){
+    document.execCommand('insertHTML', false, html);
+  }else{
+    const clean = escapeHTML(text)
+      .split(/\n{2,}/)
+      .map(p => '<p>' + p.replace(/\n/g,'<br>') + '</p>')
+      .join('');
+    document.execCommand('insertHTML', false, clean);
+  }
+});
+
+</script>
+
+</body>
+</html>
