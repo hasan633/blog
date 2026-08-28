@@ -301,6 +301,11 @@ Skip empty tags
 <input id="prettyFormat" type="checkbox" checked>
 Pretty formatted output
 </label>
+
+<label class="option">
+<input id="simpleHTML" type="checkbox">
+Simple HTML only (no divs / classes)
+</label>
 </div>
 
 <textarea id="output" class="output" placeholder="Converted HTML will appear here..."></textarea>
@@ -356,33 +361,98 @@ if(/^(javascript|data|vbscript):/i.test(href)) return '';
 return href;
 }
 
-function sanitizeInlineHTML(node){
+function sanitizeInlineHTML(node, isRoot = true){
 let html = '';
+
+function appendText(text){
+let escaped = escapeHTML(text || '');
+
+// If previous output already ends with whitespace and this text also starts
+// with whitespace, keep only one visible space at the boundary.
+if(/[\s\u00a0]$/.test(html) && /^[\s\u00a0]/.test(escaped)){
+escaped = escaped.replace(/^[\s\u00a0]+/, '');
+}
+
+html += escaped;
+}
+
+function getTrimmedLinkContent(linkNode){
+const clone = linkNode.cloneNode(true);
+const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+const textNodes = [];
+let current;
+
+while((current = walker.nextNode())){
+textNodes.push(current);
+}
+
+let leadingSpace = false;
+let trailingSpace = false;
+
+if(textNodes.length){
+const first = textNodes[0];
+const last = textNodes[textNodes.length - 1];
+
+leadingSpace = /^[\s\u00a0]/.test(first.nodeValue || '');
+trailingSpace = /[\s\u00a0]$/.test(last.nodeValue || '');
+
+first.nodeValue = String(first.nodeValue || '').replace(/^[\s\u00a0]+/, '');
+last.nodeValue = String(last.nodeValue || '').replace(/[\s\u00a0]+$/, '');
+}
+
+return {
+inner: sanitizeInlineHTML(clone, false),
+leadingSpace,
+trailingSpace
+};
+}
+
 Array.from(node.childNodes || []).forEach(child => {
 if(child.nodeType === Node.TEXT_NODE){
-html += escapeHTML(child.textContent || '');
+appendText(child.textContent || '');
 return;
 }
 if(child.nodeType !== Node.ELEMENT_NODE) return;
+
 const tag = child.tagName.toLowerCase();
 if(tag === 'img' || tag === 'figure' || tag === 'picture' || tag === 'svg') return;
+
 if(tag === 'br'){
 html += '<br>';
 return;
 }
-const inner = sanitizeInlineHTML(child);
+
 if(tag === 'a'){
 const href = safeHref(child.getAttribute('href'));
-html += href ? '<a href="' + escapeAttr(href) + '">' + inner + '</a>' : inner;
+const link = getTrimmedLinkContent(child);
+
+// Spaces accidentally included inside the hyperlink are moved OUTSIDE <a>.
+// This prevents the underlined/clickable area from including the spaces.
+if(link.leadingSpace){
+html = html.replace(/[\s\u00a0]+$/, '');
+html += ' ';
+}
+
+html += href
+? '<a href="' + escapeAttr(href) + '">' + link.inner + '</a>'
+: link.inner;
+
+if(link.trailingSpace){
+html += ' ';
+}
 return;
 }
+
+const inner = sanitizeInlineHTML(child, false);
 if(['strong','b','em','i','u','s','code'].includes(tag)){
 html += '<' + tag + '>' + inner + '</' + tag + '>';
 return;
 }
+
 html += inner;
 });
-return html.trim();
+
+return isRoot ? html.trim() : html;
 }
 
 function cleanText(value){
@@ -561,7 +631,122 @@ function formatLines(lines){
 return document.getElementById('prettyFormat').checked ? lines.join('\n') : lines.join('');
 }
 
+function makeSimpleHTML(){
+const skipEmpty = document.getElementById('skipEmpty').checked;
+let lines = [];
+
+function addLine(line){
+if(!skipEmpty || cleanText(line.replace(/<[^>]*>/g, '')) || /<(br|table|thead|tbody|tr|ul|ol)>/i.test(line)){
+lines.push(line);
+}
+}
+
+function walkSimple(nodes){
+Array.from(nodes).forEach(node => {
+if(node.nodeType === Node.TEXT_NODE){
+const text = cleanText(node.textContent);
+if(text){
+addLine('<p>' + escapeHTML(text) + '</p>');
+}
+return;
+}
+
+if(node.nodeType !== Node.ELEMENT_NODE) return;
+
+const tag = node.tagName.toLowerCase();
+
+if(['img','figure','picture','svg','script','style'].includes(tag)){
+return;
+}
+
+if(/^h[1-6]$/.test(tag)){
+const innerHTML = sanitizeInlineHTML(node);
+if(!skipEmpty || cleanText(node.textContent)){
+addLine('<' + tag + '>' + innerHTML + '</' + tag + '>');
+}
+return;
+}
+
+if(tag === 'p'){
+const innerHTML = sanitizeInlineHTML(node);
+if(!skipEmpty || cleanText(node.textContent)){
+addLine('<p>' + innerHTML + '</p>');
+}
+return;
+}
+
+if(tag === 'div'){
+const hasBlockChildren = node.querySelector('h1,h2,h3,h4,h5,h6,p,div,ul,ol,table');
+if(hasBlockChildren){
+walkSimple(node.childNodes);
+}else{
+const innerHTML = sanitizeInlineHTML(node);
+if(!skipEmpty || cleanText(node.textContent)){
+addLine('<p>' + innerHTML + '</p>');
+}
+}
+return;
+}
+
+if(tag === 'ul' || tag === 'ol'){
+const items = Array.from(node.children)
+.filter(li => li.tagName && li.tagName.toLowerCase() === 'li');
+
+if(items.length){
+lines.push('<' + tag + '>');
+items.forEach(li => {
+const innerHTML = sanitizeInlineHTML(li);
+if(!skipEmpty || cleanText(li.textContent)){
+lines.push('<li>' + innerHTML + '</li>');
+}
+});
+lines.push('</' + tag + '>');
+}
+return;
+}
+
+if(tag === 'table'){
+const tableData = parseTable(node);
+if(!tableData) return;
+
+lines.push('<table>');
+if(tableData.header.length){
+lines.push('<thead>');
+lines.push('<tr>');
+tableData.header.forEach(th => {
+if(!skipEmpty || cleanText(th)) lines.push('<th>' + th + '</th>');
+});
+lines.push('</tr>');
+lines.push('</thead>');
+}
+if(tableData.body.length){
+lines.push('<tbody>');
+tableData.body.forEach(row => {
+lines.push('<tr>');
+row.forEach(td => {
+if(!skipEmpty || cleanText(td)) lines.push('<td>' + td + '</td>');
+});
+lines.push('</tr>');
+});
+lines.push('</tbody>');
+}
+lines.push('</table>');
+return;
+}
+
+walkSimple(node.childNodes);
+});
+}
+
+walkSimple(inputEditor.childNodes);
+return formatLines(lines);
+}
+
 function makeHTML(data){
+if(document.getElementById('simpleHTML').checked){
+return makeSimpleHTML();
+}
+
 const skipEmpty = document.getElementById('skipEmpty').checked;
 const addButton = document.getElementById('h3ShopButton').checked;
 const addH3Image = document.getElementById('h3ImageBlock').checked;
