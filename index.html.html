@@ -333,7 +333,21 @@ Simple HTML only (no divs / classes)
 </div>
 
 <div id="toast" class="toast"></div>
+<script>
+const titleText = "Content to Blog HTML Converter by HASAN";
+let position = 0;
 
+setInterval(() => {
+    document.title =
+        titleText.substring(position) + " • " + titleText.substring(0, position);
+
+    position++;
+
+    if (position >= titleText.length) {
+        position = 0;
+    }
+}, 200);
+</script>
 <script>
 const inputEditor = document.getElementById('inputEditor');
 const output = document.getElementById('output');
