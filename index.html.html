@@ -3,963 +3,486 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content to Blog HTML Converter | HASAN</title>
+<meta name="description" content="Convert Google Docs and Word content into clean blog HTML. Preserve headings, links, lists and tables, preview your output, then copy or download the HTML.">
+<meta name="author" content="HASAN">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#111827">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Content to Blog by HASAN">
+<meta property="og:title" content="Content to Blog HTML Converter | HASAN">
+<meta property="og:description" content="Turn Google Docs and Word content into clean blog HTML with headings, links, lists and tables. Preview, copy or download your converted content.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Content to Blog HTML Converter | HASAN">
+<meta name="twitter:description" content="Convert formatted content into clean blog HTML. Preview, copy and download directly in your browser.">
+<!-- Add an absolute canonical URL and matching og:url once the live page URL is known. -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">   
-<title>Content to Blog HTML Converter by HASAN</title>
+<link rel="manifest" href="/site.webmanifest">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Content to Blog HTML Converter by HASAN",
+  "description": "Convert Google Docs, Word, text and HTML content into blog HTML with headings, links, lists and tables.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript and a modern web browser.",
+  "inLanguage": "en",
+  "author": {
+    "@type": "Person",
+    "name": "HASAN",
+    "url": "https://www.linkedin.com/in/hasan112/"
+  },
+  "featureList": [
+    "Paste formatted content from Google Docs or Word",
+    "Upload text or HTML files",
+    "Generate blog wrappers or simple HTML",
+    "Preview, copy and download converted HTML"
+  ]
+}
+</script>
 <style>
-a {
-    color: #009688;
-}  
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, Helvetica, sans-serif;
-}
-body{
-background:#f4f6f8;
-color:#111827;
-padding:28px;
-}
-.app{
-max-width:1280px;
-margin:0 auto;
-}
-.header{
-background:#111827;
-color:#fff;
-padding:24px;
-border-radius:18px;
-margin-bottom:20px;
-}
-.header h1{
-font-size:26px;
-margin-bottom:8px;
-}
-.header p{
-color:#d1d5db;
-line-height:1.5;
-font-size:14px;
-}
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-.card{
-background:#fff;
-border:1px solid #e5e7eb;
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.05);
-overflow:hidden;
-}
-.card-head{
-padding:16px 18px;
-border-bottom:1px solid #e5e7eb;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-}
-.card-head h2{
-font-size:18px;
-}
-.img_box{
-width:100%;
-min-height:140px;
-border:1px solid #e5e7eb;
-border-radius:14px;
-overflow:hidden;
-background:#f9fafb;
-margin:18px 0;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-.img_box img{
-width:100%;
-height:100%;
-object-fit:cover;
-display:block;
-}
-.actions{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-}
-button,
-.file-label{
-border:none;
-background:#111827;
-color:#fff;
-padding:10px 14px;
-border-radius:10px;
-cursor:pointer;
-font-size:13px;
-display:inline-flex;
-align-items:center;
-gap:7px;
-}
-button.secondary{
-background:#374151;
-}
-button.green{
-background:#15803d;
-}
-button.blue{
-background:#1d4ed8;
-}
-button.red{
-background:#dc2626;
-}
-button.light{
-background:#e5e7eb;
-color:#111827;
-}
-input[type=file]{
-display:none;
-}
-.editor{
-min-height:560px;
-max-height:650px;
-overflow:auto;
-padding:20px;
-outline:none;
-line-height:1.65;
-}
-.editor:empty:before{
-content:"Paste your Google Docs or Word content here...";
-color:#9ca3af;
-}
-.editor h1,
-.editor h2,
-.editor h3{
-margin:16px 0 8px;
-}
-.editor p{
-margin:10px 0;
-}
-.editor ul{
-margin:10px 0 10px 24px;
-}
-.editor table{
-width:100%;
-border-collapse:collapse;
-margin:14px 0;
-}
-.editor th,
-.editor td{
-border:1px solid #d1d5db;
-padding:8px;
-}
-textarea.output{
-width:100%;
-min-height:560px;
-max-height:650px;
-resize:vertical;
-border:0;
-outline:none;
-padding:20px;
-font-size:13px;
-line-height:1.55;
-font-family:Consolas, Monaco, monospace;
-color:#00e676;
-background:#0b0f14;
-}
-.options{
-display:grid;
-grid-template-columns:repeat(2, minmax(0,1fr));
-gap:12px;
-padding:16px 18px;
-border-bottom:1px solid #e5e7eb;
-}
-.option{
-display:flex;
-align-items:center;
-gap:9px;
-font-size:13px;
-color:#374151;
-}
-.option input{
-width:16px;
-height:16px;
-}
-.small-note{
-padding:12px 18px;
-font-size:12px;
-color:#6b7280;
-border-bottom:1px solid #e5e7eb;
-background:#f9fafb;
-line-height:1.5;
-}
-.toast{
-position:fixed;
-bottom:24px;
-right:24px;
-background:#111827;
-color:#fff;
-padding:12px 16px;
-border-radius:12px;
-display:none;
-box-shadow:0 10px 25px rgba(0,0,0,.25);
-font-size:13px;
-}
-.preview{
-margin-top:20px;
-}
-.preview-content{
-padding:20px;
-background:#fff;
-line-height:1.65;
-max-height:420px;
-overflow:auto;
-}
-.preview-content .main_banner_content,
-.preview-content .inner_post_content_block{
-border:1px solid #e5e7eb;
-padding:14px;
-margin-bottom:14px;
-border-radius:12px;
-}
-.preview-content table{
-width:100%;
-border-collapse:collapse;
-}
-.preview-content th,
-.preview-content td{
-border:1px solid #d1d5db;
-padding:8px;
-}
-@media(max-width:900px){
-body{
-padding:14px;
-}
-.grid{
-grid-template-columns:1fr;
-}
-.options{
-grid-template-columns:1fr;
-}
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#111827;padding:28px;line-height:1.6}
+a{color:#00695c;text-underline-offset:3px}
+button,input,textarea{font:inherit}
+:focus-visible{outline:3px solid #2563eb;outline-offset:4px}
+.app{max-width:1280px;margin:0 auto}
+.skip-link{position:absolute;top:8px;left:16px;transform:translateY(-150%);z-index:10;background:#fff;padding:12px 18px;border-radius:8px}
+.skip-link:focus{transform:translateY(0)}
+.header{background:#111827;color:#fff;padding:24px;border-radius:18px;margin-bottom:20px}
+.header h1{font-size:clamp(23px,3vw,30px);line-height:1.3;margin-bottom:8px}
+.header p{color:#d1d5db;font-size:14px}
+.header a{color:#5eead4}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.card{min-width:0;background:#fff;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 10px 25px rgba(0,0,0,.05);overflow:hidden}
+.card-head{padding:16px 18px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.card-head h2{font-size:18px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+button{border:0;background:#111827;color:#fff;padding:10px 14px;min-height:44px;border-radius:10px;cursor:pointer;font-size:13px}
+button:hover{filter:brightness(.92)}
+button.secondary{background:#374151}
+button.green{background:#15803d}
+button.blue{background:#1d4ed8}
+button.light{background:#e5e7eb;color:#111827}
+.editor{min-height:560px;max-height:650px;overflow:auto;padding:20px;line-height:1.65;overflow-wrap:anywhere}
+.editor:focus-visible{outline-offset:-4px}
+.editor:empty::before{content:attr(data-placeholder);color:#6b7280;pointer-events:none}
+.editor h1,.editor h2,.editor h3,.editor h4,.editor h5,.editor h6{margin:16px 0 8px}
+.editor p{margin:10px 0}
+.editor ul,.editor ol{margin:10px 0 10px 24px}
+.editor table{width:100%;border-collapse:collapse;margin:14px 0}
+.editor th,.editor td{border:1px solid #d1d5db;padding:8px}
+textarea.output{display:block;width:100%;min-height:560px;max-height:650px;resize:vertical;border:0;padding:20px;font-size:13px;line-height:1.55;font-family:Consolas,Monaco,monospace;color:#00e676;background:#0b0f14;tab-size:2}
+textarea.output::placeholder{color:#a7b0bd}
+textarea.output:focus-visible{outline-offset:-4px}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px 18px;border:0;border-bottom:1px solid #e5e7eb;min-width:0}
+.option{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:#374151;cursor:pointer}
+.option input{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#1d4ed8}
+.small-note{padding:12px 18px;font-size:12px;color:#4b5563;border-bottom:1px solid #e5e7eb;background:#f9fafb;line-height:1.5}
+.toast{position:fixed;bottom:24px;right:24px;max-width:calc(100vw - 48px);background:#111827;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.25);font-size:13px;z-index:20}
+.toast:empty{display:none}
+.preview,.guide{margin-top:20px}
+.preview-frame{display:block;width:100%;height:420px;border:0;background:#fff}
+.guide{padding:24px}
+.guide h2{font-size:21px;margin-bottom:12px}
+.guide ol{margin-left:24px}
+.guide li{margin:6px 0}
+.guide p{margin-top:12px;color:#374151;font-size:14px}
+.footer{padding:20px 0;text-align:center;font-size:13px;color:#4b5563}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){body{padding:14px}.grid{grid-template-columns:1fr}.options{grid-template-columns:1fr}.editor,textarea.output{min-height:360px}.header{padding:20px}}
 </style>
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="app">
+  <header class="header">
+    <h1>Content to Blog HTML Converter</h1>
+    <p>By <a href="https://www.linkedin.com/in/hasan112/" rel="author">HASAN</a></p>
+    <p>Paste content from Google Docs or Word to convert headings, paragraphs, links, lists and tables into blog HTML. Preview your content, then copy or download it. Source images are skipped.</p>
+  </header>
 
-<div class="header">
-<h1>Content to Blog by <a href="https://www.linkedin.com/in/hasan112/">HASAN</a></h1>
-<p>Paste content from Google Docs or Word. This tool converts headings, paragraphs, unordered lists, and tables into your fixed blog HTML wrapper. Images are skipped.</p>
+  <main id="main-content" tabindex="-1">
+    <noscript><p class="small-note">Enable JavaScript in your browser to use the HTML converter.</p></noscript>
+    <div class="grid">
+      <section class="card" aria-labelledby="input-heading">
+        <div class="card-head">
+          <h2 id="input-heading">Input Content</h2>
+          <div class="actions">
+            <button type="button" id="uploadButton">Upload .txt / .html</button>
+            <input id="fileInput" type="file" accept=".txt,.html,.htm" aria-label="Upload a text or HTML file" hidden>
+            <button type="button" class="light" id="clearButton">Clear</button>
+          </div>
+        </div>
+        <p id="input-help" class="small-note">Copy content from Google Docs or Word and paste it below. Use real headings in your source document where possible.</p>
+        <div id="inputEditor" class="editor" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="input-heading" aria-describedby="input-help" data-placeholder="Paste your Google Docs or Word content here..."></div>
+      </section>
+
+      <section class="card" aria-labelledby="output-heading">
+        <div class="card-head">
+          <h2 id="output-heading">Converted HTML</h2>
+          <div class="actions">
+            <button type="button" class="green" id="convertButton">Convert</button>
+            <button type="button" class="blue" id="copyButton">Copy</button>
+            <button type="button" class="secondary" id="downloadButton">Download</button>
+          </div>
+        </div>
+        <fieldset class="options">
+          <legend class="sr-only">HTML conversion options</legend>
+          <label class="option"><input id="firstParasBanner" type="checkbox" checked>Use first paragraphs before first heading as banner</label>
+          <label class="option"><input id="h3ShopButton" type="checkbox">Add Shop Now button after H3 blocks</label>
+          <label class="option"><input id="h3ImageBlock" type="checkbox">Add image wrapper to H3 blocks</label>
+          <label class="option"><input id="skipEmpty" type="checkbox" checked>Skip empty tags</label>
+          <label class="option"><input id="prettyFormat" type="checkbox" checked>Pretty formatted output</label>
+          <label class="option"><input id="simpleHTML" type="checkbox">Simple HTML only (no divs / classes)</label>
+        </fieldset>
+        <textarea id="output" class="output" aria-labelledby="output-heading" placeholder="Converted HTML will appear here..." spellcheck="false"></textarea>
+      </section>
+    </div>
+
+    <section class="card preview" aria-labelledby="preview-heading">
+      <div class="card-head">
+        <h2 id="preview-heading">Quick Preview</h2>
+        <button type="button" class="light" id="previewButton">Refresh Preview</button>
+      </div>
+      <iframe id="preview" class="preview-frame" title="Preview of converted blog content" sandbox referrerpolicy="no-referrer"></iframe>
+    </section>
+
+    <section class="card guide" aria-labelledby="guide-heading">
+      <h2 id="guide-heading">How to convert Google Docs or Word content to HTML</h2>
+      <ol>
+        <li>Copy your formatted content and paste it into Input Content, or upload a .txt or .html file.</li>
+        <li>Choose your conversion options. Select Simple HTML for output without layout wrappers or classes.</li>
+        <li>Select Convert and review the result in Quick Preview.</li>
+        <li>Copy the HTML into your blog editor or download it as an HTML file.</li>
+      </ol>
+      <p>The converter processes content locally in your browser. It keeps supported text formatting and links while removing source images and pasted styling.</p>
+      <p>Blog wrapper mode maps H1–H2 to H2 and H3–H6 to H3. Simple HTML mode preserves heading levels. When using image or Shop Now placeholders, add your image URLs, descriptive alt text and destination links before publishing.</p>
+    </section>
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  </main>
+
+  <footer class="footer"><p>Content to Blog HTML Converter by <a href="https://www.linkedin.com/in/hasan112/" rel="author">HASAN</a></p></footer>
 </div>
 
-<div class="grid">
-
-<div class="card">
-<div class="card-head">
-<h2>Input Content</h2>
-<div class="actions">
-<label class="file-label" for="fileInput">Upload .txt / .html</label>
-<input id="fileInput" type="file" accept=".txt,.html,.htm">
-<button class="light" onclick="clearInput()">Clear</button>
-</div>
-</div>
-
-<div class="small-note">
-Best method: copy content from Google Docs or Word and paste it directly below. Keep headings as real headings where possible.
-</div>
-
-<div id="inputEditor" class="editor" contenteditable="true"></div>
-</div>
-
-<div class="card">
-<div class="card-head">
-<h2>Converted HTML</h2>
-<div class="actions">
-<button class="green" onclick="convertContent()">Convert</button>
-<button class="blue" onclick="copyOutput()">Copy</button>
-<button class="secondary" onclick="downloadOutput()">Download</button>
-</div>
-</div>
-
-<div class="options">
-<label class="option">
-<input id="firstParasBanner" type="checkbox" checked>
-Use first paragraphs before first heading as banner
-</label>
-
-<label class="option">
-<input id="h3ShopButton" type="checkbox">
-Add Shop Now button after H3 blocks
-</label>
-
-<label class="option">
-<input id="h3ImageBlock" type="checkbox">
-Add image wrapper to H3 blocks
-</label>
-
-<label class="option">
-<input id="skipEmpty" type="checkbox" checked>
-Skip empty tags
-</label>
-
-<label class="option">
-<input id="prettyFormat" type="checkbox" checked>
-Pretty formatted output
-</label>
-
-<label class="option">
-<input id="simpleHTML" type="checkbox">
-Simple HTML only (no divs / classes)
-</label>
-</div>
-
-<textarea id="output" class="output" placeholder="Converted HTML will appear here..."></textarea>
-</div>
-
-</div>
-
-<div class="card preview">
-<div class="card-head">
-<h2>Quick Preview</h2>
-<div class="actions">
-<button class="light" onclick="refreshPreview()">Refresh Preview</button>
-</div>
-</div>
-<div id="preview" class="preview-content"></div>
-</div>
-
-</div>
-
-<div id="toast" class="toast"></div>
 <script>
-const titleText = "Content to Blog HTML Converter by HASAN";
-let position = 0;
-
-setInterval(() => {
-    document.title =
-        titleText.substring(position) + " • " + titleText.substring(0, position);
-
-    position++;
-
-    if (position >= titleText.length) {
-        position = 0;
-    }
-}, 180);
-</script>
-<script>
+'use strict';
 const inputEditor = document.getElementById('inputEditor');
 const output = document.getElementById('output');
 const preview = document.getElementById('preview');
+const checked = id => document.getElementById(id).checked;
+const cleanText = value => String(value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+let toastTimer;
 
-function showToast(message){
-const toast = document.getElementById('toast');
-toast.textContent = message;
-toast.style.display = 'block';
-setTimeout(() => {
-toast.style.display = 'none';
-}, 1800);
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  clearTimeout(toastTimer);
+  toast.textContent = message;
+  toastTimer = setTimeout(() => { toast.textContent = ''; }, 3000);
 }
 
-function escapeHTML(value){
-return String(value || '')
-.replace(/&/g,'&amp;')
-.replace(/</g,'&lt;')
-.replace(/>/g,'&gt;');
+function escapeHTML(value) {
+  return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function escapeAttr(value){
-return escapeHTML(value)
-.replace(/"/g,'&quot;')
-.replace(/'/g,'&#39;');
+function escapeAttr(value) {
+  return escapeHTML(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function safeHref(value){
-const href = String(value || '').trim();
-if(!href) return '';
-if(/^(javascript|data|vbscript):/i.test(href)) return '';
-return href;
+function safeHref(value) {
+  const href = String(value || '').trim();
+  if (!href || /[\u0000-\u0020\u007f]/.test(href)) return '';
+  const scheme = href.match(/^([a-z][a-z0-9+.-]*):/i);
+  if (scheme && !/^(https?|mailto|tel)$/i.test(scheme[1])) return '';
+  return href;
 }
 
-function sanitizeInlineHTML(node, isRoot = true){
-let html = '';
+const droppedTags = new Set(['SCRIPT','STYLE','NOSCRIPT','TEMPLATE','IFRAME','OBJECT','EMBED','SVG','MATH','IMG','PICTURE','FIGURE','VIDEO','AUDIO','SOURCE','LINK','META','BASE','INPUT','BUTTON','SELECT','TEXTAREA']);
+const allowedTags = new Set(['P','DIV','H1','H2','H3','H4','H5','H6','UL','OL','LI','TABLE','CAPTION','THEAD','TBODY','TFOOT','TR','TH','TD','A','STRONG','B','EM','I','U','S','CODE','BR','BLOCKQUOTE','PRE','SUP','SUB']);
 
-function appendText(text){
-let escaped = escapeHTML(text || '');
-
-// If previous output already ends with whitespace and this text also starts
-// with whitespace, keep only one visible space at the boundary.
-if(/[\s\u00a0]$/.test(html) && /^[\s\u00a0]/.test(escaped)){
-escaped = escaped.replace(/^[\s\u00a0]+/, '');
+function sanitizeSource(html) {
+  const parsed = new DOMParser().parseFromString(html, 'text/html');
+  function clean(node) {
+    if (node.nodeType === Node.TEXT_NODE) return document.createTextNode(node.nodeValue);
+    const fragment = document.createDocumentFragment();
+    if (node.nodeType !== Node.ELEMENT_NODE || droppedTags.has(node.tagName)) return fragment;
+    const result = allowedTags.has(node.tagName) ? document.createElement(node.tagName.toLowerCase()) : fragment;
+    if (node.tagName === 'A') {
+      const href = safeHref(node.getAttribute('href'));
+      if (href) result.setAttribute('href', href);
+    }
+    if (['TH','TD'].includes(node.tagName)) {
+      ['colspan','rowspan'].forEach(attr => {
+        const value = node.getAttribute(attr);
+        if (value && /^\d+$/.test(value) && Number(value) > 0 && Number(value) <= 1000) result.setAttribute(attr, value);
+      });
+      if (node.tagName === 'TH' && ['row','col','rowgroup','colgroup'].includes(node.getAttribute('scope'))) result.setAttribute('scope', node.getAttribute('scope'));
+    }
+    if (node.tagName === 'OL') {
+      const start = node.getAttribute('start');
+      if (start && /^-?\d+$/.test(start)) result.setAttribute('start', start);
+    }
+    if (node.tagName === 'LI') {
+      const value = node.getAttribute('value');
+      if (value && /^-?\d+$/.test(value)) result.setAttribute('value', value);
+    }
+    for (const child of node.childNodes) result.appendChild(clean(child));
+    return result;
+  }
+  const holder = document.createElement('div');
+  for (const node of parsed.body.childNodes) holder.appendChild(clean(node));
+  return holder.innerHTML;
 }
 
-html += escaped;
+function inlineHTML(node, trim = true) {
+  let html = '';
+  for (const child of node.childNodes) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      let text = escapeHTML(child.textContent);
+      if (/\s$/.test(html)) text = text.replace(/^\s+/, '');
+      html += text;
+      continue;
+    }
+    if (child.nodeType !== Node.ELEMENT_NODE || droppedTags.has(child.tagName)) continue;
+    const tag = child.tagName.toLowerCase();
+    if (tag === 'br') { html += '<br>'; continue; }
+    const inner = inlineHTML(child, false);
+    if (tag === 'a') {
+      const href = safeHref(child.getAttribute('href'));
+      const clone = child.cloneNode(true);
+      const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+      const texts = [];
+      while (walker.nextNode()) texts.push(walker.currentNode);
+      const leading = /^\s/.test(clone.textContent);
+      const trailing = /\s$/.test(clone.textContent);
+      for (const text of texts) { text.nodeValue = text.nodeValue.replace(/^\s+/, ''); if (text.nodeValue) break; }
+      for (const text of [...texts].reverse()) { text.nodeValue = text.nodeValue.replace(/\s+$/, ''); if (text.nodeValue) break; }
+      if (leading && !/\s$/.test(html)) html += ' ';
+      const content = inlineHTML(clone, false);
+      html += href ? '<a href="' + escapeAttr(href) + '">' + content + '</a>' : content;
+      if (trailing) html += ' ';
+    } else if (['strong','b','em','i','u','s','code','sup','sub'].includes(tag)) {
+      html += '<' + tag + '>' + inner + '</' + tag + '>';
+    } else html += inner;
+  }
+  return trim ? html.trim() : html;
 }
 
-function getTrimmedLinkContent(linkNode){
-const clone = linkNode.cloneNode(true);
-const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
-const textNodes = [];
-let current;
-
-while((current = walker.nextNode())){
-textNodes.push(current);
+function listHTML(node) {
+  const tag = node.tagName.toLowerCase();
+  const start = tag === 'ol' && node.hasAttribute('start') ? ' start="' + escapeAttr(node.getAttribute('start')) + '"' : '';
+  const items = Array.from(node.children).filter(child => child.tagName === 'LI');
+  let html = '<' + tag + start + '>';
+  for (const li of items) {
+    if (checked('skipEmpty') && !cleanText(li.textContent)) continue;
+    let content = '';
+    let inline = document.createElement('span');
+    const flush = () => { content += inlineHTML(inline, false); inline = document.createElement('span'); };
+    for (const child of li.childNodes) {
+      if (child.nodeType === Node.ELEMENT_NODE && ['UL','OL'].includes(child.tagName)) { flush(); content += listHTML(child); }
+      else inline.appendChild(child.cloneNode(true));
+    }
+    flush();
+    const value = li.hasAttribute('value') ? ' value="' + escapeAttr(li.getAttribute('value')) + '"' : '';
+    html += '<li' + value + '>' + content + '</li>';
+  }
+  return html + '</' + tag + '>';
 }
 
-let leadingSpace = false;
-let trailingSpace = false;
-
-if(textNodes.length){
-const first = textNodes[0];
-const last = textNodes[textNodes.length - 1];
-
-leadingSpace = /^[\s\u00a0]/.test(first.nodeValue || '');
-trailingSpace = /[\s\u00a0]$/.test(last.nodeValue || '');
-
-first.nodeValue = String(first.nodeValue || '').replace(/^[\s\u00a0]+/, '');
-last.nodeValue = String(last.nodeValue || '').replace(/[\s\u00a0]+$/, '');
+function readContent() {
+  const root = document.createElement('div');
+  root.innerHTML = sanitizeSource(inputEditor.innerHTML);
+  const items = [];
+  const blockSelector = 'p,div,h1,h2,h3,h4,h5,h6,ul,ol,table,blockquote,pre';
+  function walk(parent) {
+    let pending = document.createElement('span');
+    function flush() {
+      const html = inlineHTML(pending);
+      if (cleanText(pending.textContent) || pending.querySelector('br')) items.push({type:'p', html});
+      pending = document.createElement('span');
+    }
+    for (const node of parent.childNodes) {
+      if (node.nodeType !== Node.ELEMENT_NODE || !node.matches(blockSelector)) {
+        pending.appendChild(node.cloneNode(true));
+        continue;
+      }
+      flush();
+      const type = node.tagName.toLowerCase();
+      if (type === 'div' || (type === 'blockquote' && node.querySelector(blockSelector))) { walk(node); continue; }
+      if (checked('skipEmpty') && !cleanText(node.textContent) && type !== 'table') continue;
+      if (type === 'ul' || type === 'ol') items.push({type, html:listHTML(node)});
+      else if (type === 'table') items.push({type, html:node.outerHTML});
+      else items.push({type, html:inlineHTML(node)});
+    }
+    flush();
+  }
+  walk(root);
+  return items;
 }
 
-return {
-inner: sanitizeInlineHTML(clone, false),
-leadingSpace,
-trailingSpace
-};
+function itemHTML(item) {
+  if (['ul','ol','table'].includes(item.type)) return item.html;
+  return '<' + item.type + '>' + item.html + '</' + item.type + '>';
 }
 
-Array.from(node.childNodes || []).forEach(child => {
-if(child.nodeType === Node.TEXT_NODE){
-appendText(child.textContent || '');
-return;
-}
-if(child.nodeType !== Node.ELEMENT_NODE) return;
-
-const tag = child.tagName.toLowerCase();
-if(tag === 'img' || tag === 'figure' || tag === 'picture' || tag === 'svg') return;
-
-if(tag === 'br'){
-html += '<br>';
-return;
+function formatLines(lines) {
+  return lines.join(checked('prettyFormat') ? '\n' : '');
 }
 
-if(tag === 'a'){
-const href = safeHref(child.getAttribute('href'));
-const link = getTrimmedLinkContent(child);
-
-// Spaces accidentally included inside the hyperlink are moved OUTSIDE <a>.
-// This prevents the underlined/clickable area from including the spaces.
-if(link.leadingSpace){
-html = html.replace(/[\s\u00a0]+$/, '');
-html += ' ';
+function makeHTML(items) {
+  if (checked('simpleHTML')) return formatLines(items.map(itemHTML));
+  const banner = [];
+  const blocks = [];
+  let active = null;
+  let introduction = true;
+  for (const item of items) {
+    if (/^h[1-6]$/.test(item.type)) {
+      introduction = false;
+      active = {heading:item.html, type:/^h[12]$/.test(item.type) ? 'h2' : 'h3', items:[]};
+      blocks.push(active);
+    } else if (introduction && item.type === 'p' && checked('firstParasBanner')) banner.push(item.html);
+    else {
+      introduction = false;
+      if (!active) { active = {heading:'',type:'h2',items:[]}; blocks.push(active); }
+      active.items.push(item);
+    }
+  }
+  const lines = ['<div class="main_post_content">','<div class="inner_wrap_post_content">'];
+  if (banner.length || !checked('skipEmpty')) {
+    lines.push('<div class="main_banner_content">', ...banner.map(p => '<p>' + p + '</p>'), '</div>');
+  }
+  for (const block of blocks) {
+    lines.push('<div class="inner_post_content_block">');
+    if (block.heading || !checked('skipEmpty')) {
+      lines.push('<div class="headeing_box">','<' + block.type + '>' + block.heading + '</' + block.type + '>','</div>');
+    }
+    if (block.heading && (block.type === 'h2' || checked('h3ImageBlock'))) {
+      lines.push('<div class="img_box"><!-- Add an image with its src and descriptive alt text here. --></div>');
+    }
+    let textOpen = false;
+    for (const item of block.items) {
+      if (item.type === 'table') {
+        if (textOpen) { lines.push('</div>'); textOpen = false; }
+        lines.push('<div class="table_box">',item.html,'</div>');
+      } else {
+        if (!textOpen) { lines.push('<div class="text_box">'); textOpen = true; }
+        lines.push(itemHTML(item));
+      }
+    }
+    if (textOpen) lines.push('</div>');
+    if (block.type === 'h3' && checked('h3ShopButton')) lines.push('<div class="button_box"><a href="">Shop Now</a></div>');
+    lines.push('</div>');
+  }
+  lines.push('</div>','</div>');
+  return formatLines(lines);
 }
 
-html += href
-? '<a href="' + escapeAttr(href) + '">' + link.inner + '</a>'
-: link.inner;
-
-if(link.trailingSpace){
-html += ' ';
-}
-return;
+function refreshPreview() {
+  const css = 'body{font:16px/1.65 Arial,sans-serif;color:#111827;padding:20px;margin:0;overflow-wrap:anywhere}h1,h2,h3,h4,h5,h6{line-height:1.35}p{margin:10px 0}a{color:#00695c}table{width:100%;border-collapse:collapse;margin:14px 0}th,td{border:1px solid #d1d5db;padding:8px;text-align:left}.table_box{overflow:auto}.main_banner_content,.inner_post_content_block{border:1px solid #e5e7eb;padding:14px;margin-bottom:14px;border-radius:12px}.img_box{min-height:140px;border:1px solid #e5e7eb;border-radius:14px;background:#f9fafb;margin:18px 0}img{max-width:100%;height:auto}';
+  preview.srcdoc = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src https: http: data:; base-uri \'none\'; form-action \'none\'"><title>Blog content preview</title><style>' + css + '</style></head><body><main>' + (output.value || '<p>Your converted content will appear here.</p>') + '</main></body></html>';
 }
 
-const inner = sanitizeInlineHTML(child, false);
-if(['strong','b','em','i','u','s','code'].includes(tag)){
-html += '<' + tag + '>' + inner + '</' + tag + '>';
-return;
+function convertContent() {
+  const items = readContent();
+  if (!items.length) { output.value = ''; refreshPreview(); showToast('Paste or upload content first.'); return; }
+  output.value = makeHTML(items);
+  refreshPreview();
+  showToast('Converted');
 }
 
-html += inner;
+async function copyOutput() {
+  if (!output.value.trim()) convertContent();
+  if (!output.value.trim()) return;
+  try {
+    if (!navigator.clipboard || !window.isSecureContext) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(output.value);
+    showToast('Copied');
+  } catch {
+    output.focus();
+    output.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch {}
+    showToast(copied ? 'Copied' : 'Press Ctrl+C or Command+C to copy the selected HTML.');
+  }
+}
+
+function downloadOutput() {
+  if (!output.value.trim()) convertContent();
+  if (!output.value.trim()) return;
+  const url = URL.createObjectURL(new Blob([output.value], {type:'text/html;charset=utf-8'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'converted-blog-html.html';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Downloaded');
+}
+
+function clearInput() {
+  inputEditor.replaceChildren();
+  output.value = '';
+  document.getElementById('fileInput').value = '';
+  refreshPreview();
+  inputEditor.focus();
+  showToast('Cleared');
+}
+
+function plainTextHTML(text) {
+  return String(text).replace(/\r\n?/g,'\n').split(/\n{2,}/).map(p => '<p>' + escapeHTML(p).replace(/\n/g,'<br>') + '</p>').join('');
+}
+
+function insertHTML(html) {
+  inputEditor.focus();
+  const selection = window.getSelection();
+  let range = selection.rangeCount ? selection.getRangeAt(0) : null;
+  if (!range || !inputEditor.contains(range.commonAncestorContainer)) {
+    range = document.createRange();
+    range.selectNodeContents(inputEditor);
+    range.collapse(false);
+  }
+  range.deleteContents();
+  const fragment = range.createContextualFragment(html);
+  const last = fragment.lastChild;
+  range.insertNode(fragment);
+  if (last) range.setStartAfter(last);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+document.getElementById('uploadButton').addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('clearButton').addEventListener('click', clearInput);
+document.getElementById('convertButton').addEventListener('click', convertContent);
+document.getElementById('copyButton').addEventListener('click', copyOutput);
+document.getElementById('downloadButton').addEventListener('click', downloadOutput);
+document.getElementById('previewButton').addEventListener('click', refreshPreview);
+document.getElementById('fileInput').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
+  if (!/\.(txt|html?)$/i.test(file.name)) { showToast('Choose a .txt, .html or .htm file.'); this.value = ''; return; }
+  try {
+    const content = await file.text();
+    inputEditor.innerHTML = /\.txt$/i.test(file.name) ? plainTextHTML(content) : sanitizeSource(content);
+    output.value = '';
+    refreshPreview();
+    showToast('File loaded');
+  } catch { showToast('Could not read this file. Please try again.'); }
+  this.value = '';
 });
-
-return isRoot ? html.trim() : html;
-}
-
-function cleanText(value){
-return String(value || '')
-.replace(/\u00a0/g, ' ')
-.replace(/\s+/g, ' ')
-.trim();
-}
-
-function getDirectText(node){
-let text = '';
-node.childNodes.forEach(child => {
-if(child.nodeType === Node.TEXT_NODE){
-text += child.textContent;
-}
+inputEditor.addEventListener('paste', event => {
+  event.preventDefault();
+  if (!event.clipboardData) return;
+  const html = event.clipboardData.getData('text/html');
+  insertHTML(html ? sanitizeSource(html) : plainTextHTML(event.clipboardData.getData('text/plain')));
 });
-return cleanText(text || node.textContent);
-}
-
-function createBlock(type, heading){
-return {
-type:type,
-heading:heading || '',
-paragraphs:[],
-ul:[],
-table:null
-};
-}
-
-function pushParagraphToBlock(blocks, bannerParas, text, hasHeadingStarted){
-if(!text) return;
-
-if(!hasHeadingStarted && document.getElementById('firstParasBanner').checked){
-bannerParas.push(text);
-return;
-}
-
-if(!blocks.length){
-blocks.push(createBlock('h2',''));
-}
-
-blocks[blocks.length - 1].paragraphs.push(text);
-}
-
-function parseTable(table){
-const rows = Array.from(table.querySelectorAll('tr'));
-if(!rows.length) return null;
-
-let header = [];
-let body = [];
-
-rows.forEach((row, rowIndex) => {
-const cells = Array.from(row.children).filter(cell => {
-const tag = cell.tagName ? cell.tagName.toLowerCase() : '';
-return tag === 'th' || tag === 'td';
-});
-
-const values = cells.map(cell => sanitizeInlineHTML(cell));
-
-if(!values.length) return;
-
-const hasTh = cells.some(cell => cell.tagName && cell.tagName.toLowerCase() === 'th');
-
-if(rowIndex === 0 && (hasTh || values.length)){
-header = values;
-}else{
-body.push(values);
-}
-});
-
-if(!header.length && body.length){
-header = body.shift();
-}
-
-return {header, body};
-}
-
-function readNodes(){
-const blocks = [];
-const bannerParas = [];
-let hasHeadingStarted = false;
-
-function walk(nodes){
-Array.from(nodes).forEach(node => {
-if(node.nodeType === Node.TEXT_NODE){
-const text = cleanText(node.textContent);
-if(text){
-pushParagraphToBlock(blocks, bannerParas, escapeHTML(text), hasHeadingStarted);
-}
-return;
-}
-
-if(node.nodeType !== Node.ELEMENT_NODE) return;
-
-const tag = node.tagName.toLowerCase();
-
-if(tag === 'img' || tag === 'figure' || tag === 'picture' || tag === 'svg'){
-return;
-}
-
-if(tag === 'h1' || tag === 'h2'){
-const text = cleanText(node.textContent);
-const inlineHTML = sanitizeInlineHTML(node);
-if(text || !document.getElementById('skipEmpty').checked){
-blocks.push(createBlock('h2', inlineHTML));
-hasHeadingStarted = true;
-}
-return;
-}
-
-if(tag === 'h3' || tag === 'h4'){
-const text = cleanText(node.textContent);
-const inlineHTML = sanitizeInlineHTML(node);
-if(text || !document.getElementById('skipEmpty').checked){
-blocks.push(createBlock('h3', inlineHTML));
-hasHeadingStarted = true;
-}
-return;
-}
-
-if(tag === 'p' || tag === 'div'){
-const containsBlock = node.querySelector('h1,h2,h3,h4,ul,ol,table');
-const text = cleanText(node.textContent);
-const inlineHTML = sanitizeInlineHTML(node);
-
-if(tag === 'div' && containsBlock){
-walk(node.childNodes);
-return;
-}
-
-if(text || !document.getElementById('skipEmpty').checked){
-pushParagraphToBlock(blocks, bannerParas, inlineHTML, hasHeadingStarted);
-}
-return;
-}
-
-if(tag === 'ul' || tag === 'ol'){
-if(!blocks.length){
-blocks.push(createBlock('h2',''));
-}
-
-const items = Array.from(node.children)
-.filter(li => li.tagName && li.tagName.toLowerCase() === 'li')
-.filter(li => cleanText(li.textContent))
-.map(li => sanitizeInlineHTML(li));
-
-blocks[blocks.length - 1].ul.push(...items);
-return;
-}
-
-if(tag === 'table'){
-const tableData = parseTable(node);
-if(tableData){
-blocks.push({
-type:'table',
-heading:'',
-paragraphs:[],
-ul:[],
-table:tableData
-});
-hasHeadingStarted = true;
-}
-return;
-}
-
-walk(node.childNodes);
-});
-}
-
-walk(inputEditor.childNodes);
-
-return {bannerParas, blocks};
-}
-
-function formatLines(lines){
-return document.getElementById('prettyFormat').checked ? lines.join('\n') : lines.join('');
-}
-
-function makeSimpleHTML(){
-const skipEmpty = document.getElementById('skipEmpty').checked;
-let lines = [];
-
-function addLine(line){
-if(!skipEmpty || cleanText(line.replace(/<[^>]*>/g, '')) || /<(br|table|thead|tbody|tr|ul|ol)>/i.test(line)){
-lines.push(line);
-}
-}
-
-function walkSimple(nodes){
-Array.from(nodes).forEach(node => {
-if(node.nodeType === Node.TEXT_NODE){
-const text = cleanText(node.textContent);
-if(text){
-addLine('<p>' + escapeHTML(text) + '</p>');
-}
-return;
-}
-
-if(node.nodeType !== Node.ELEMENT_NODE) return;
-
-const tag = node.tagName.toLowerCase();
-
-if(['img','figure','picture','svg','script','style'].includes(tag)){
-return;
-}
-
-if(/^h[1-6]$/.test(tag)){
-const innerHTML = sanitizeInlineHTML(node);
-if(!skipEmpty || cleanText(node.textContent)){
-addLine('<' + tag + '>' + innerHTML + '</' + tag + '>');
-}
-return;
-}
-
-if(tag === 'p'){
-const innerHTML = sanitizeInlineHTML(node);
-if(!skipEmpty || cleanText(node.textContent)){
-addLine('<p>' + innerHTML + '</p>');
-}
-return;
-}
-
-if(tag === 'div'){
-const hasBlockChildren = node.querySelector('h1,h2,h3,h4,h5,h6,p,div,ul,ol,table');
-if(hasBlockChildren){
-walkSimple(node.childNodes);
-}else{
-const innerHTML = sanitizeInlineHTML(node);
-if(!skipEmpty || cleanText(node.textContent)){
-addLine('<p>' + innerHTML + '</p>');
-}
-}
-return;
-}
-
-if(tag === 'ul' || tag === 'ol'){
-const items = Array.from(node.children)
-.filter(li => li.tagName && li.tagName.toLowerCase() === 'li');
-
-if(items.length){
-lines.push('<' + tag + '>');
-items.forEach(li => {
-const innerHTML = sanitizeInlineHTML(li);
-if(!skipEmpty || cleanText(li.textContent)){
-lines.push('<li>' + innerHTML + '</li>');
-}
-});
-lines.push('</' + tag + '>');
-}
-return;
-}
-
-if(tag === 'table'){
-const tableData = parseTable(node);
-if(!tableData) return;
-
-lines.push('<table>');
-if(tableData.header.length){
-lines.push('<thead>');
-lines.push('<tr>');
-tableData.header.forEach(th => {
-if(!skipEmpty || cleanText(th)) lines.push('<th>' + th + '</th>');
-});
-lines.push('</tr>');
-lines.push('</thead>');
-}
-if(tableData.body.length){
-lines.push('<tbody>');
-tableData.body.forEach(row => {
-lines.push('<tr>');
-row.forEach(td => {
-if(!skipEmpty || cleanText(td)) lines.push('<td>' + td + '</td>');
-});
-lines.push('</tr>');
-});
-lines.push('</tbody>');
-}
-lines.push('</table>');
-return;
-}
-
-walkSimple(node.childNodes);
-});
-}
-
-walkSimple(inputEditor.childNodes);
-return formatLines(lines);
-}
-
-function makeHTML(data){
-if(document.getElementById('simpleHTML').checked){
-return makeSimpleHTML();
-}
-
-const skipEmpty = document.getElementById('skipEmpty').checked;
-const addButton = document.getElementById('h3ShopButton').checked;
-const addH3Image = document.getElementById('h3ImageBlock').checked;
-let lines = [];
-
-lines.push('<div class="main_post_content">');
-lines.push('<div class="inner_wrap_post_content">');
-lines.push('');
-
-lines.push('<div class="main_banner_content">');
-data.bannerParas.forEach(p => {
-if(!skipEmpty || cleanText(p)){
-lines.push('<p>' + p + '</p>');
-}
-});
-lines.push('</div>');
-lines.push('');
-
-data.blocks.forEach(block => {
-if(block.type === 'table'){
-lines.push('<div class="inner_post_content_block">');
-lines.push('<div class="table_box">');
-lines.push('<table>');
-lines.push('<thead>');
-lines.push('<tr>');
-
-block.table.header.forEach(th => {
-if(!skipEmpty || cleanText(th)){
-lines.push('<th>' + th + '</th>');
-}
-});
-
-lines.push('</tr>');
-lines.push('</thead>');
-lines.push('<tbody>');
-
-block.table.body.forEach(row => {
-lines.push('<tr>');
-row.forEach(td => {
-if(!skipEmpty || cleanText(td)){
-lines.push('<td>' + td + '</td>');
-}
-});
-lines.push('</tr>');
-});
-
-lines.push('</tbody>');
-lines.push('</table>');
-lines.push('</div>');
-lines.push('</div>');
-lines.push('');
-return;
-}
-
-const headingTag = block.type === 'h3' ? 'h3' : 'h2';
-const shouldRenderImage = block.type === 'h2' || (block.type === 'h3' && addH3Image);
-
-lines.push('<div class="inner_post_content_block">');
-
-lines.push('<div class="headeing_box">');
-lines.push('<' + headingTag + '>' + block.heading + '</' + headingTag + '>');
-lines.push('</div>');
-
-if(shouldRenderImage){
-lines.push('<div class="img_box"><img src=""></div>');
-}
-
-lines.push('<div class="text_box">');
-
-block.paragraphs.forEach(p => {
-if(!skipEmpty || cleanText(p)){
-lines.push('<p>' + p + '</p>');
-}
-});
-
-if(block.ul.length){
-lines.push('<ul>');
-block.ul.forEach(li => {
-if(!skipEmpty || cleanText(li)){
-lines.push('<li>' + li + '</li>');
-}
-});
-lines.push('</ul>');
-}
-
-lines.push('</div>');
-
-if(block.type === 'h3' && addButton){
-lines.push('<div class="button_box"><a href="">Shop Now</a></div>');
-}
-
-lines.push('</div>');
-lines.push('');
-});
-
-lines.push('</div>');
-lines.push('</div>');
-
-return formatLines(lines);
-}
-
-function convertContent(){
-const data = readNodes();
-output.value = makeHTML(data);
+inputEditor.addEventListener('drop', event => event.preventDefault());
 refreshPreview();
-showToast('Converted');
-}
-
-function refreshPreview(){
-preview.innerHTML = output.value || '';
-}
-
-function copyOutput(){
-if(!output.value.trim()){
-convertContent();
-}
-
-navigator.clipboard.writeText(output.value).then(() => {
-showToast('Copied');
-}).catch(() => {
-output.select();
-document.execCommand('copy');
-showToast('Copied');
-});
-}
-
-function downloadOutput(){
-if(!output.value.trim()){
-convertContent();
-}
-
-const blob = new Blob([output.value], {type:'text/html'});
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'converted-blog-html.html';
-document.body.appendChild(a);
-a.click();
-a.remove();
-URL.revokeObjectURL(url);
-showToast('Downloaded');
-}
-
-function clearInput(){
-inputEditor.innerHTML = '';
-output.value = '';
-preview.innerHTML = '';
-showToast('Cleared');
-}
-
-document.getElementById('fileInput').addEventListener('change', function(){
-const file = this.files[0];
-if(!file) return;
-
-const reader = new FileReader();
-
-reader.onload = function(e){
-const content = e.target.result || '';
-
-if(file.name.toLowerCase().endsWith('.txt')){
-inputEditor.innerHTML = content
-.split(/\n{2,}/)
-.map(p => '<p>' + escapeHTML(p.trim()) + '</p>')
-.join('');
-}else{
-inputEditor.innerHTML = content;
-}
-
-showToast('File loaded');
-};
-
-reader.readAsText(file);
-});
-
-inputEditor.addEventListener('paste', function(e){
-e.preventDefault();
-
-const html = e.clipboardData.getData('text/html');
-const text = e.clipboardData.getData('text/plain');
-
-if(html){
-document.execCommand('insertHTML', false, html);
-}else{
-const clean = escapeHTML(text)
-.split(/\n{2,}/)
-.map(p => '<p>' + p.replace(/\n/g,'<br>') + '</p>')
-.join('');
-document.execCommand('insertHTML', false, clean);
-}
-});
-
 </script>
-
 </body>
 </html>
